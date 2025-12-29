@@ -151,7 +151,6 @@ router.put(
         logger.error("User not found");
         return res.status(404).json({ error: "User not found" });
       }
-      
 
       // Update fields
       const updateFields = {
@@ -161,18 +160,19 @@ router.put(
       };
 
       // Task 6: Update user in DB
-       const updatedUser = await collection.findOneAndUpdate(
-         { email },
-         { $set: updateFields },
-         { returnDocument: "after" }
-       );
-      if (!updatedUser.value) {
+      const updatedUser = await collection.findOneAndUpdate(
+        { email },
+        { $set: updateFields },
+        { returnDocument: "after" }
+      );
+
+      if (!updatedUser) {
         return res.status(500).json({ error: "Failed to update profile" });
       }
       // Task 7: Create JWT
       const payload = {
         user: {
-          id: updatedUser.value._id.toString(),
+          id: updatedUser._id.toString(),
         },
       };
 

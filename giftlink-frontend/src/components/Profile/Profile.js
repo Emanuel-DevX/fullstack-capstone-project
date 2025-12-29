@@ -35,7 +35,9 @@ const Profile = () => {
     try {
       const authtoken = sessionStorage.getItem("auth-token");
       const email = sessionStorage.getItem("email");
-      const name = sessionStorage.getItem("name");
+      const firstName = sessionStorage.getItem("firstName");
+      const lastName = sessionStorage.getItem("lastName");
+      const name = firstName && lastName ? `${firstName} ${lastName}` : null;
       if (name || authtoken) {
         const storedUserDetails = {
           firstName: sessionStorage.getItem("firstName"),
@@ -93,10 +95,14 @@ const Profile = () => {
       if (response.ok) {
         // Update the user details in session storage
         // Task 4: set the new name in the AppContext
-        setUserName(updatedDetails.name);
+        const fullName = `${updatedDetails.firstName} ${updatedDetails.lastName}`;
+
+        setUserName(fullName);
 
         // Task 5: set user name in the session
-        sessionStorage.setItem("name", updatedDetails.name);
+        sessionStorage.setItem("name", fullName);
+        sessionStorage.setItem("firstName", updatedDetails.firstName);
+        sessionStorage.setItem("lastName", updatedDetails.lastName);
         setUserDetails(updatedDetails);
         setEditMode(false);
         // Display success message to the user
@@ -152,7 +158,9 @@ const Profile = () => {
         </form>
       ) : (
         <div className="profile-details">
-          <h1>Hi, {userDetails.name}</h1>
+          <h1>
+            Hi, {userDetails.firstName} {userDetails.lastName}
+          </h1>
           <p>
             {" "}
             <b>Email:</b> {userDetails.email}
