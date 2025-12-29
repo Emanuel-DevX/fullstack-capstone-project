@@ -1,18 +1,74 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./LoginPage.css";
 
+// Task 1: Import urlConfig
+import { urlConfig } from "../../config";
+
+// Task 2: Import useAppContext
+import { useAppContext } from "../../context/AuthContext";
+
+// Task 3: Import useNavigate
+import { useNavigate } from "react-router-dom";
 function LoginPage() {
   // State variables
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // Task 4: Incorrect password / error message
+  const [incorrect, setIncorrect] = useState("");
+
+  // Task 5: navigate, bearerToken, setIsLoggedIn
+  const navigate = useNavigate();
+  const bearerToken = sessionStorage.getItem("auth-token");
+  const { setIsLoggedIn } = useAppContext();
+
+  // Task 6: If already logged in, redirect to MainPage
+  useEffect(() => {
+    if (bearerToken) {
+      navigate("/app");
+    }
+  }, [bearerToken, navigate]);
   // Handle login button click
   const handleLogin = async () => {
-    console.log("Inside handleLogin");
-    console.log({
-      email,
-      password,
-    });
+    try {
+      const response = await fetch(`${urlConfig.backendUrl}/api/auth/login`, {
+        // Task 7: Set method
+        method: "POST",
+
+        // Task 8: Set headers
+        headers: {
+          "content-type": "application/json",
+          Authorization: bearerToken ? `Bearer ${bearerToken}` : "",
+        },
+
+        // Task 9: Set body
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        setIncorrect(json.error || "Login failed");
+        return;
+      }
+
+      // Save session data
+      sessionStorage.setItem("auth-token", json.authtoken);
+      sessionStorage.setItem("name", json.userName);
+      sessionStorage.setItem("email", json.userEmail);
+
+      // Update global auth state
+      setIsLoggedIn(true);
+
+      // Navigate to MainPage
+      navigate("/app");
+    } catch (e) {
+      console.log("Error fetching details:", e.message);
+      setIncorrect("Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -51,7 +107,7 @@ function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-
+            {incorrect && <div className="text-danger mb-3">{incorrect}</div>}
             {/* Login Button */}
             <button
               className="btn btn-primary w-100 mb-3"
