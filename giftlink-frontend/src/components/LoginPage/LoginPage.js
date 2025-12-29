@@ -57,7 +57,8 @@ function LoginPage() {
 
       // Save session data
       sessionStorage.setItem("auth-token", json.authtoken);
-      sessionStorage.setItem("name", json.userName);
+      sessionStorage.setItem("firstName", json.firstName);
+        sessionStorage.setItem("lastName", json.lastName);
       sessionStorage.setItem("email", json.userEmail);
 
       // Update global auth state

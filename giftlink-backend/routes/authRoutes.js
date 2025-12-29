@@ -96,7 +96,8 @@ router.post("/login", async (req, res) => {
     }
 
     // Task 5: Fetch user details
-    const userName = theUser.firstName;
+    const firstName = theUser.firstName;
+    const lastName = theUser.lastName;
     const userEmail = theUser.email;
 
     // Task 6: Create JWT authentication
@@ -109,7 +110,7 @@ router.post("/login", async (req, res) => {
     const authtoken = jwt.sign(payload, JWT_SECRET);
 
     // Send response
-    res.json({ authtoken, userName, userEmail });
+    res.json({ authtoken, firstName, lastName, userEmail });
   } catch (e) {
     logger.error(e);
     return res.status(500).send("Internal server error");
@@ -150,19 +151,24 @@ router.put(
         logger.error("User not found");
         return res.status(404).json({ error: "User not found" });
       }
+      
 
       // Update fields
-      existingUser.firstName = req.body.firstName || existingUser.firstName;
-      existingUser.lastName = req.body.lastName || existingUser.lastName;
-      existingUser.updatedAt = new Date();
+      const updateFields = {
+        firstName: req.body.firstName || existingUser.firstName,
+        lastName: req.body.lastName || existingUser.lastName,
+        updatedAt: new Date(),
+      };
 
       // Task 6: Update user in DB
-      const updatedUser = await collection.findOneAndUpdate(
-        { email },
-        { $set: existingUser },
-        { returnDocument: "after" }
-      );
-
+       const updatedUser = await collection.findOneAndUpdate(
+         { email },
+         { $set: updateFields },
+         { returnDocument: "after" }
+       );
+      if (!updatedUser.value) {
+        return res.status(500).json({ error: "Failed to update profile" });
+      }
       // Task 7: Create JWT
       const payload = {
         user: {

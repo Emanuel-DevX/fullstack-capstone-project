@@ -9,7 +9,9 @@ export default function Navbar() {
   const navigate = useNavigate();
   useEffect(() => {
     const authTokenFromSession = sessionStorage.getItem("auth-token");
-    const nameFromSession = sessionStorage.getItem("name");
+    const firstName = sessionStorage.getItem("firstName");
+    const lastName = sessionStorage.getItem("lastName");
+    const nameFromSession = firstName && lastName ? `${firstName} ${lastName}` : null;
     if (authTokenFromSession) {
       if (isLoggedIn && nameFromSession) {
         setUserName(nameFromSession);

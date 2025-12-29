@@ -53,7 +53,9 @@ function RegisterPage() {
       // Task 1 & 2: Access data + set user details
       if (data.authtoken) {
         sessionStorage.setItem("auth-token", data.authtoken);
-        sessionStorage.setItem("name", firstName);
+        sessionStorage.setItem("firstName", firstName);
+        sessionStorage.setItem("lastName", lastName);
+
         sessionStorage.setItem("email", data.email);
 
         // Task 3: Set logged-in state
