@@ -6,6 +6,8 @@ import './App.css';
 import Navbar from './components/Navbar/Navbar';
 import RegisterPage from './components/RegisterPage/RegisterPage';
 import LoginPage from './components/LoginPage/LoginPage';
+import DetailsPage from "./components/DetailsPage/DetailsPage";
+
 
 function App() {
 
@@ -18,9 +20,11 @@ function App() {
         <Route path="/app" element={<MainPage />} />
         <Route path="/app/register" element={<RegisterPage />} />
         <Route path="/app/login" element={<LoginPage />} />
+        <Route path="/app/product/:productId" element={<DetailsPage />} />;
       </Routes>
     </>
   );
 }
 
 export default App;
+
