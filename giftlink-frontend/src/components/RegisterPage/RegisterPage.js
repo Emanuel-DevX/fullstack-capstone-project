@@ -1,22 +1,76 @@
 import React, { useState } from "react";
 import "./RegisterPage.css";
+// Task 1: Import urlConfig
+import { urlConfig } from "../../config";
 
+// Task 2: Import useAppContext
+import { useAppContext } from "../../context/AuthContext";
+
+// Task 3: Import useNavigate
+import { useNavigate } from "react-router-dom";
 function RegisterPage() {
   // State variables
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // Task 4: Error message state
+  const [showerr, setShowerr] = useState("");
+  // Task 5: navigate + setIsLoggedIn
+  const navigate = useNavigate();
+  const { setIsLoggedIn } = useAppContext();
 
-  // Handle register button click
   const handleRegister = async () => {
-    console.log("Register invoked");
-    console.log({
-      firstName,
-      lastName,
-      email,
-      password,
-    });
+    try {
+      const response = await fetch(
+        `${urlConfig.backendUrl}/api/auth/register`,
+        {
+          // Task 6: Set method
+          method: "POST",
+
+          // Task 7: Set headers
+          headers: {
+            "content-type": "application/json",
+          },
+
+          // Task 8: Set body
+          body: JSON.stringify({
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setShowerr(data.error || "Registration failed");
+        return;
+      }
+
+      // Task 1 & 2: Access data + set user details
+      if (data.authtoken) {
+        sessionStorage.setItem("auth-token", data.authtoken);
+        sessionStorage.setItem("name", firstName);
+        sessionStorage.setItem("email", data.email);
+
+        // Task 3: Set logged-in state
+        setIsLoggedIn(true);
+
+        // Task 4: Navigate to MainPage
+        navigate("/app");
+      }
+
+      // Task 5: Handle registration error
+      if (data.error) {
+        setShowerr(data.error);
+      }
+    } catch (e) {
+      console.log("Error fetching details: " + e.message);
+      setShowerr("Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -25,6 +79,9 @@ function RegisterPage() {
         <div className="col-md-8 col-lg-6">
           <div className="register-card p-4 border rounded">
             <h2 className="text-center mb-4 font-weight-bold">Register</h2>
+            {showerr && (
+              <div className="text-danger text-center mb-3">{showerr}</div>
+            )}
 
             {/* First Name */}
             <div className="mb-3">
