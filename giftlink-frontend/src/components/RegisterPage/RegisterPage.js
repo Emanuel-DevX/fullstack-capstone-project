@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 import React, { useState } from "react";
 import "./RegisterPage.css";
 // Task 1: Import urlConfig

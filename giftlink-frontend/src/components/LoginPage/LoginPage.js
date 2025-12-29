@@ -1,3 +1,5 @@
+/*jshint esversion: 8 */
+
 import React, { useState, useEffect } from "react";
 import "./LoginPage.css";
 
@@ -58,7 +60,7 @@ function LoginPage() {
       // Save session data
       sessionStorage.setItem("auth-token", json.authtoken);
       sessionStorage.setItem("firstName", json.firstName);
-        sessionStorage.setItem("lastName", json.lastName);
+      sessionStorage.setItem("lastName", json.lastName);
       sessionStorage.setItem("email", json.userEmail);
 
       // Update global auth state

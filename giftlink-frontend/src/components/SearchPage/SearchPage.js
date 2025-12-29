@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { urlConfig } from "../../config";
@@ -152,4 +153,3 @@ function SearchPage() {
 }
 
 export default SearchPage;
-
